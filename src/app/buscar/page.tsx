@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import DropdownSelect from '@/components/DropdownSelect';
 
 interface Local {
   id: string;
@@ -70,20 +71,20 @@ function BuscarContent() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-2xl text-gray-900 mb-6 animate-fade-in">Buscar locales y negocios</h1>
 
-        <div className="card p-5 mb-6">
+        <div className="card p-5 mb-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div>
               <label className="block text-sm text-gray-500 mb-2">
                 Buscar
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10">🔍</span>
                 <input
                   type="text"
                   placeholder="Palabra clave..."
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  className="input w-full pl-10"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -92,17 +93,12 @@ function BuscarContent() {
               <label className="block text-sm text-gray-500 mb-2">
                 Categoría
               </label>
-              <select
+              <DropdownSelect
                 value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
-                className="input w-full"
-              >
-                {categorias.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                onChange={setCategoria}
+                options={categorias.map(c => ({ value: c, label: c }))}
+                className="w-full"
+              />
             </div>
           </div>
         </div>
@@ -141,10 +137,17 @@ function BuscarContent() {
                   ) : (
                     <span className="text-4xl text-gray-300">🏪</span>
                   )}
-                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-md">
-                    <span className="text-xs font-medium text-blue-600">
-                      {JSON.parse(local.categorias)[0]}
-                    </span>
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1">
+                    {JSON.parse(local.categorias).slice(0, 2).map((cat: string) => (
+                      <span key={cat} className="bg-white/95 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-medium text-blue-600">
+                        {cat}
+                      </span>
+                    ))}
+                    {JSON.parse(local.categorias).length > 2 && (
+                      <span className="bg-white/95 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-medium text-gray-500">
+                        +{JSON.parse(local.categorias).length - 2}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="p-4">

@@ -146,12 +146,19 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-col md:flex-row gap-4">
-          <input type="text" placeholder="Buscar..." value={busqueda} onChange={e => setBusqueda(e.target.value)} className="flex-1 px-4 py-2 border rounded-lg" />
-          <div className="flex gap-2">
-            <button onClick={() => setFiltro('todos')} className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${filtro === 'todos' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>Todos</button>
-            <button onClick={() => setFiltro('activos')} className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${filtro === 'activos' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>Activos</button>
-            <button onClick={() => setFiltro('inactivos')} className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${filtro === 'inactivos' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>Inactivos</button>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+            <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar usuario..." className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">×</button>}
+          </div>
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+            {(['todos', 'activos', 'inactivos'] as const).map(f => (
+              <button key={f} onClick={() => setFiltro(f)}
+                className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${filtro === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                {f}
+              </button>
+            ))}
           </div>
         </div>
 

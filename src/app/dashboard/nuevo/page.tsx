@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
+import DropdownSelect from '@/components/DropdownSelect';
 
 const categorias = [
   'Alimentación',
@@ -217,15 +218,12 @@ export default function NuevoLocalPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Categoría *
             </label>
-            <select
+            <DropdownSelect
               value={formData.categoria}
-              onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {categorias.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+              onChange={(v) => setFormData({ ...formData, categoria: v })}
+              options={categorias.map(c => ({ value: c, label: c }))}
+              className="w-full"
+            />
           </div>
 
           <div>

@@ -202,28 +202,26 @@ if (status === 'authenticated') {
         </div>
 
         {/* STATS */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-gray-100">
-            <div className="px-4 first:pl-0 last:pr-0">
-              <p className="text-2xl font-bold text-gray-900">{totalLocales}</p>
-              <p className="text-xs text-gray-400 mt-0.5">Locales</p>
-            </div>
-            <div className="px-4 first:pl-0 last:pr-0">
-              <p className="text-2xl font-bold text-green-600">{activos}</p>
-              <p className="text-xs text-gray-400 mt-0.5">Activos</p>
-            </div>
-            <div className="px-4 first:pl-0 last:pr-0">
-              <p className="text-2xl font-bold text-red-500">{totalLocales - activos}</p>
-              <p className="text-xs text-gray-400 mt-0.5">Inactivos</p>
-            </div>
-            <div className="px-4 first:pl-0 last:pr-0">
-              <p className="text-2xl font-bold text-blue-600">{colaborando.length}</p>
-              <p className="text-xs text-gray-400 mt-0.5">Colaboradores</p>
-            </div>
-            <div className="px-4 first:pl-0 last:pr-0">
-              <p className="text-2xl font-bold text-amber-600">{edicionesPendientes.length}</p>
-              <p className="text-xs text-gray-400 mt-0.5">Sugerencias</p>
-            </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-gray-900">{totalLocales}</p>
+            <p className="text-xs text-gray-400 mt-0.5">Locales</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-green-600">{activos}</p>
+            <p className="text-xs text-gray-400 mt-0.5">Activos</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-red-500">{totalLocales - activos}</p>
+            <p className="text-xs text-gray-400 mt-0.5">Inactivos</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-blue-600">{colaborando.length}</p>
+            <p className="text-xs text-gray-400 mt-0.5">Colaboradores</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-amber-600">{edicionesPendientes.length}</p>
+            <p className="text-xs text-gray-400 mt-0.5">Sugerencias</p>
           </div>
         </div>
 
@@ -255,7 +253,7 @@ if (status === 'authenticated') {
                 <div className="relative flex-1">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
                   <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar local..."
-                    className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                   {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">×</button>}
                 </div>
                 <div className="flex gap-1 bg-gray-100 rounded-xl p-1">

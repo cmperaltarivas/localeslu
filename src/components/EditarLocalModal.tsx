@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
 import { loadGoogleMapsScript } from '@/lib/googleMaps';
+import DropdownSelect from '@/components/DropdownSelect';
 
 const todasCategorias = [
   'Alimentación',
@@ -370,14 +371,12 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
               <div className="space-y-3">
                 {formData.items.map((item, index) => (
                   <div key={index} className="flex gap-2 items-center">
-                    <select
+                    <DropdownSelect
                       value={item.tipo}
-                      onChange={(e) => actualizarItem(index, 'tipo', e.target.value)}
-                      className="px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                    >
-                      <option value="producto">Producto</option>
-                      <option value="servicio">Servicio</option>
-                    </select>
+                      onChange={(v) => actualizarItem(index, 'tipo', v)}
+                      options={[{ value: 'producto', label: 'Producto' }, { value: 'servicio', label: 'Servicio' }]}
+                      className="w-28"
+                    />
                     <input
                       type="text"
                       value={item.nombre}
