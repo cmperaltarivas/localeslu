@@ -1,24 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
-import { loadGoogleMapsScript } from '@/lib/googleMaps';
 import DropdownSelect from '@/components/DropdownSelect';
+import MapPicker from '@/components/MapPicker';
 
 const todasCategorias = [
-  'Alimentación',
-  'Vestimenta',
-  'Hogar',
-  'Servicios',
-  'Tecnología',
-  'Salud',
-  'Educación',
-  'Entretenimiento',
-  'Belleza',
-  'Deportes',
-  'Otros',
+  'Alimentación', 'Vestimenta', 'Hogar', 'Servicios',
+  'Tecnología', 'Salud', 'Educación', 'Entretenimiento',
+  'Belleza', 'Deportes', 'Otros',
 ];
 
 interface Props {
@@ -35,7 +27,19 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
   const [saving, setSaving] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
   const [errores, setErrores] = useState<Record<string, string>>({});
-  const mapRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollAlPrimerError = useCallback(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const firstError = container.querySelector('[data-error="true"]');
+    if (firstError) {
+      const offset = firstError.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - 24;
+      container.scrollTo({ top: offset, behavior: 'smooth' });
+      const input = firstError.querySelector('input, textarea');
+      if (input) (input as HTMLElement).focus();
+    }
+  }, []);
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -94,72 +98,6 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
     }
   };
 
-  useEffect(() => {
-    if (!isOpen || typeof window === 'undefined' || !mapRef.current || loading) return;
-
-    const initMap = () => {
-      if (!window.google?.maps || !mapRef.current) return;
-
-      const defaultCenter = formData.latitud && formData.longitud
-        ? { lat: parseFloat(formData.latitud), lng: parseFloat(formData.longitud) }
-        : { lat: -40.29531, lng: -73.08211 }; // La Unión
-
-      const map = new window.google.maps.Map(mapRef.current, {
-        center: defaultCenter,
-        zoom: formData.latitud ? 15 : 13,
-        clickableIcons: false,
-      });
-
-      let marker: any = null;
-
-      if (formData.latitud && formData.longitud) {
-        marker = new window.google.maps.Marker({
-          position: defaultCenter,
-          map,
-          draggable: true,
-        });
-
-        marker.addListener('dragend', () => {
-          const pos = marker.getPosition();
-          if (!pos) return;
-          setFormData(prev => ({
-            ...prev,
-            latitud: pos.lat().toString(),
-            longitud: pos.lng().toString(),
-          }));
-        });
-      }
-
-      map.addListener('click', (e: any) => {
-        if (!e.latLng) return;
-
-        const lat = e.latLng.lat();
-        const lng = e.latLng.lng();
-
-        if (marker) {
-          marker.setPosition(e.latLng);
-        } else {
-          marker = new window.google.maps.Marker({
-            position: e.latLng,
-            map,
-            draggable: true,
-          });
-        }
-
-        setFormData(prev => ({
-          ...prev,
-          latitud: lat.toString(),
-          longitud: lng.toString(),
-        }));
-      });
-    };
-
-    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-    if (!API_KEY) return;
-
-    loadGoogleMapsScript(initMap);
-  }, [isOpen, loading, formData.latitud, formData.longitud]);
-
   if (!isOpen) return null;
 
   if (status === 'unauthenticated') {
@@ -190,8 +128,12 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
       newErrores.precio = 'Debe ser un número';
     }
     
-    setErrores(newErrores);
     return Object.keys(newErrores).length === 0;
+  };
+
+  const handleSubmitError = (erroresActuales: Record<string, string>) => {
+    setErrores(erroresActuales);
+    setTimeout(() => scrollAlPrimerError(), 100);
   };
 
   const toggleCategoria = (cat: string) => {
@@ -229,9 +171,29 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrores({});
+    const newErrores: Record<string, string> = {};
 
-    if (!validar()) return;
+    if (!formData.nombre.trim()) {
+      newErrores.nombre = 'El nombre es obligatorio';
+    } else if (formData.nombre.trim().length < 3) {
+      newErrores.nombre = 'Mínimo 3 caracteres';
+    }
+    if (!formData.descripcion.trim()) {
+      newErrores.descripcion = 'La descripción es obligatoria';
+    } else if (formData.descripcion.trim().length < 10) {
+      newErrores.descripcion = 'Mínimo 10 caracteres';
+    }
+    if (formData.categorias.length === 0) {
+      newErrores.categorias = 'Selecciona al menos una categoría';
+    }
+    if (formData.precio && isNaN(Number(formData.precio))) {
+      newErrores.precio = 'Debe ser un número';
+    }
+
+    if (Object.keys(newErrores).length > 0) {
+      handleSubmitError(newErrores);
+      return;
+    }
 
     setSaving(true);
 
@@ -241,8 +203,8 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          categorias: JSON.stringify(formData.categorias),
-          items: JSON.stringify(formData.items.filter(i => i.nombre.trim())),
+          categorias: formData.categorias,
+          items: formData.items.filter(i => i.nombre.trim()),
           precio: formData.precio ? parseFloat(formData.precio) : null,
           latitud: formData.latitud ? parseFloat(formData.latitud) : null,
           longitud: formData.longitud ? parseFloat(formData.longitud) : null,
@@ -296,7 +258,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
+      <div ref={scrollRef} className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto animate-in fade-in zoom-in duration-200">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between rounded-t-2xl z-30">
           <h2 className="text-xl font-bold text-gray-900">Editar Local</h2>
           <button
@@ -308,7 +270,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <div>
+          <div data-error={errores.nombre ? "true" : undefined}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Nombre *
             </label>
@@ -329,7 +291,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
             )}
           </div>
 
-          <div>
+          <div data-error={errores.categorias ? "true" : undefined}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Categorías *
             </label>
@@ -404,7 +366,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
             )}
           </div>
 
-          <div>
+          <div data-error={errores.descripcion ? "true" : undefined}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Descripción *
             </label>
@@ -428,14 +390,12 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
           <div className="border-t border-gray-200 pt-4">
             <h3 className="font-semibold text-gray-900 mb-3">📍 Ubicación</h3>
             <p className="text-sm text-gray-500 mb-2">
-              {formData.latitud && formData.longitud 
-                ? '✓ Haz clic en el mapa para cambiar la ubicación'
-                : 'Haz clic en el mapa para seleccionar la ubicación'}
+              {formData.latitud && formData.longitud ? 'Haz clic en el mapa para cambiar la ubicación' : 'Haz clic en el mapa para seleccionar la ubicación'}
             </p>
-            <div 
-              ref={mapRef} 
-              className="w-full h-64 rounded-xl border border-gray-200 bg-gray-100"
-              style={{ position: 'relative', zIndex: 1 }}
+            <MapPicker
+              latitud={formData.latitud}
+              longitud={formData.longitud}
+              onPositionChange={(lat, lng) => setFormData(prev => ({ ...prev, latitud: lat, longitud: lng }))}
             />
             {formData.latitud && formData.longitud && (
               <div className="mt-2 p-2 bg-green-50 rounded-lg text-sm text-green-700">

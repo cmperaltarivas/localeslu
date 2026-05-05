@@ -18,6 +18,9 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Directorio de Productos y Servicios",
   description: "Encuentra y comparte productos y servicios cerca de ti",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -29,12 +32,14 @@ export default function RootLayout({
     <html
       lang="es"
       className={`${playfair.variable} ${outfit.variable} antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col">
         <Providers>
           <Header />
           <ToastContainer />
           <main className="flex-1 pt-[73px]">{children}</main>
+          <div className="noise-bg" />
         </Providers>
       </body>
     </html>

@@ -53,6 +53,12 @@ export async function PUT(request: NextRequest) {
 
     if (accion === 'aprobar') {
       const datosNuevos = JSON.parse(edicion.datos);
+      const camposAString = ['categorias', 'items', 'imagenes'];
+      for (const campo of camposAString) {
+        if (campo in datosNuevos && Array.isArray(datosNuevos[campo])) {
+          datosNuevos[campo] = JSON.stringify(datosNuevos[campo]);
+        }
+      }
       await prisma.local.update({
         where: { id: edicion.localId },
         data: { ...datosNuevos },

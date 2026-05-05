@@ -5,6 +5,27 @@ import { prisma } from '@/lib/prisma';
 
 const ADMIN_EMAIL = 'cmperaltarivas@gmail.com';
 
+async function getUsuarioActual(session: { user?: { email?: string; id?: string } }) {
+  if (!session.user?.email && !session.user?.id) return null;
+  if (session.user.email) {
+    const usuario = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (usuario) return usuario;
+  }
+  if (session.user.id) {
+    const usuario = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (usuario) return usuario;
+  }
+  return null;
+}
+
+async function esOwnerDeResena(resenaId: string, usuarioId: string): Promise<boolean> {
+  const resena = await prisma.resena.findUnique({
+    where: { id: resenaId },
+    include: { local: { select: { userId: true } } },
+  });
+  return resena?.local.userId === usuarioId;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -53,27 +74,25 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
+    if (!session?.user?.email && !session?.user?.id) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    if (session.user.email !== ADMIN_EMAIL) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+    const usuario = await getUsuarioActual(session);
+    if (!usuario) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
 
     const data = await request.json();
-
     if (!data.id) {
       return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
     }
 
-    const existing = await prisma.resena.findUnique({
-      where: { id: data.id },
-    });
+    const esAdmin = usuario.email === ADMIN_EMAIL;
+    const esOwner = await esOwnerDeResena(data.id, usuario.id);
 
-    if (!existing) {
-      return NextResponse.json({ error: 'Reseña no encontrada' }, { status: 404 });
+    if (!esAdmin && !esOwner) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
     }
 
     const resena = await prisma.resena.update({
@@ -91,13 +110,13 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
+    if (!session?.user?.email && !session?.user?.id) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    if (session.user.email !== ADMIN_EMAIL) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+    const usuario = await getUsuarioActual(session);
+    if (!usuario) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -107,12 +126,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
     }
 
-    const existing = await prisma.resena.findUnique({
-      where: { id },
-    });
+    const esAdmin = usuario.email === ADMIN_EMAIL;
+    const esOwner = await esOwnerDeResena(id, usuario.id);
 
-    if (!existing) {
-      return NextResponse.json({ error: 'Reseña no encontrada' }, { status: 404 });
+    if (!esAdmin && !esOwner) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
     }
 
     await prisma.resena.delete({

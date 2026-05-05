@@ -105,7 +105,7 @@ export default function AdminPage() {
   });
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-gray-50">
+    <div className="min-h-[calc(100vh-73px)] bg-[var(--bg)]">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -119,7 +119,7 @@ export default function AdminPage() {
 
         {/* STATS */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-gray-900">{stats.totalUsuarios}</p>
             <p className="text-xs text-gray-400 mt-0.5">Usuarios</p>
             <div className="flex gap-2 mt-1 text-xs">
@@ -127,7 +127,7 @@ export default function AdminPage() {
               <span className="text-red-400">{stats.totalUsuarios - stats.usuariosActivos} inactivos</span>
             </div>
           </div>
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-gray-900">{stats.totalLocales}</p>
             <p className="text-xs text-gray-400 mt-0.5">Locales</p>
             <div className="flex gap-2 mt-1 text-xs">
@@ -135,21 +135,21 @@ export default function AdminPage() {
               <span className="text-red-400">{stats.totalLocales - stats.localesActivos} inactivos</span>
             </div>
           </div>
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-gray-900">{stats.totalResenas}</p>
             <p className="text-xs text-gray-400 mt-0.5">Reseñas</p>
             {stats.resenasPendientes > 0 && <p className="text-xs text-amber-600 mt-1">{stats.resenasPendientes} pendientes</p>}
           </div>
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-blue-600">{stats.totalColaboradores}</p>
             <p className="text-xs text-gray-400 mt-0.5">Colaboraciones</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-3">
+        <div className="bg-[var(--card-bg)] rounded-xl shadow-sm border border-[var(--border-light)] p-4 mb-6 flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
-            <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar usuario..." className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+            <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar usuario..." className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg)] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
             {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">×</button>}
           </div>
           <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
@@ -163,7 +163,7 @@ export default function AdminPage() {
         </div>
 
         {uFiltrados.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
+          <div className="bg-[var(--card-bg)] rounded-xl p-12 text-center shadow-sm border border-[var(--border-light)]">
             <div className="text-5xl mb-4">👥</div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Sin resultados</h3>
             <p className="text-gray-500">No se encontraron usuarios con estos filtros</p>
@@ -174,7 +174,7 @@ export default function AdminPage() {
               const localesActivos = u.locales.filter((l: any) => l.activo).length;
               const localesInactivos = u.locales.length - localesActivos;
               return (
-                <div key={u.id} className={`bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden ${!u.activo ? 'bg-gray-50/50' : ''}`}>
+                <div key={u.id} className={`bg-[var(--card-bg)] rounded-xl shadow-sm border border-[var(--border-light)] hover:shadow-md transition-shadow overflow-hidden ${!u.activo ? 'bg-[var(--bg)]/50' : ''}`}>
                   <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -201,7 +201,7 @@ export default function AdminPage() {
                       </button>
                     </div>
 
-                    <div className="flex gap-1.5 pt-3 border-t border-gray-100">
+                    <div className="flex gap-1.5 pt-3 border-t border-[var(--border-light)]">
                       {u.activo ? (
                         <button onClick={() => abrirModal(u, 'desactivar')} className="flex-1 text-center text-xs font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 py-2 rounded-lg transition-colors">
                           Desactivar
@@ -224,7 +224,7 @@ export default function AdminPage() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-sm w-full p-6">
+            <div className="bg-[var(--card-bg)] rounded-xl max-w-sm w-full p-6">
               <div className="text-center mb-4">
                 <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center ${modalTipo === 'eliminar' ? 'bg-red-100' : 'bg-orange-100'}`}>
                   <span className="text-2xl">{modalTipo === 'eliminar' ? '🗑️' : modalTipo === 'activar' ? '▶️' : '⏸️'}</span>
@@ -241,7 +241,7 @@ export default function AdminPage() {
 
         {verResenas && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div className="bg-[var(--card-bg)] rounded-xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto">
               <div className="flex justify-between mb-4"><h3 className="font-bold text-lg">Reseñas de {verResenas.nombre}</h3><button onClick={() => setVerResenas(null)}>✕</button></div>
               <div className="flex gap-4 mb-4 text-sm"><span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">✓ {reseñasAprobadas.length}</span><span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">⏳ {reseñasPendientesArr.length}</span></div>
               {!resenasUsuario.length ? <p className="text-center py-4">Sin reseñas</p> : (
@@ -273,7 +273,7 @@ export default function AdminPage() {
 
         {verLocales && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div className="bg-[var(--card-bg)] rounded-xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto">
               <div className="flex justify-between mb-4"><h3 className="font-bold text-lg">Locales de {verLocales.nombre}</h3><button onClick={() => setVerLocales(null)}>✕</button></div>
               {!verLocales.locales.length ? <p className="text-center py-4">Sin locales</p> : (
                 <div className="space-y-3">

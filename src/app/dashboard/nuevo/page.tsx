@@ -151,7 +151,7 @@ export default function NuevoLocalPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-73px)] bg-gray-50">
+    <div className="min-h-[calc(100vh-73px)] bg-[var(--bg)]">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-medium text-gray-900 mb-6">
           Nuevo Local o Negocio
@@ -184,7 +184,7 @@ export default function NuevoLocalPage() {
                 if (errores.nombre) setErrores({ ...errores, nombre: undefined });
               }}
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errores.nombre ? 'border-red-500' : 'border-gray-200'
+                errores.nombre ? 'border-red-500' : 'border-[var(--border)]'
               }`}
               placeholder="Ej: Panadería Don Juan, Barbería Style"
             />
@@ -204,7 +204,7 @@ export default function NuevoLocalPage() {
                 if (errores.descripcion) setErrores({ ...errores, descripcion: undefined });
               }}
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errores.descripcion ? 'border-red-500' : 'border-gray-200'
+                errores.descripcion ? 'border-red-500' : 'border-[var(--border)]'
               }`}
               rows={4}
               placeholder="Describe tu local, productos y servicios..."
@@ -234,12 +234,12 @@ export default function NuevoLocalPage() {
               type="number"
               value={formData.precio}
               onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="25000"
             />
           </div>
 
-          <div className="border-t border-gray-200 pt-5">
+          <div className="border-t border-[var(--border)] pt-5">
             <h3 className="font-bold text-gray-900 mb-4">📍 Dirección (opcional)</h3>
             <div className="space-y-4">
               <div>
@@ -250,7 +250,7 @@ export default function NuevoLocalPage() {
                   type="text"
                   value={formData.direccion}
                   onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Av. Principal 123, Santiago"
                 />
               </div>
@@ -264,7 +264,7 @@ export default function NuevoLocalPage() {
                     type="text"
                     value={formData.latitud}
                     onChange={(e) => setFormData({ ...formData, latitud: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="-33.4489"
                   />
                 </div>
@@ -276,7 +276,7 @@ export default function NuevoLocalPage() {
                     type="text"
                     value={formData.longitud}
                     onChange={(e) => setFormData({ ...formData, longitud: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="-70.6693"
                   />
                 </div>
@@ -284,7 +284,7 @@ export default function NuevoLocalPage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-5">
+          <div className="border-t border-[var(--border)] pt-5">
             <h3 className="font-bold text-gray-900 mb-4">📱 Presencia online (opcional)</h3>
             <div className="space-y-4">
               <div>
@@ -295,7 +295,7 @@ export default function NuevoLocalPage() {
                   type="text"
                   value={formData.redesSociales}
                   onChange={(e) => setFormData({ ...formData, redesSociales: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="@instagram, @tiktok, WhatsApp +56912345678"
                 />
               </div>
@@ -308,7 +308,7 @@ export default function NuevoLocalPage() {
                   type="text"
                   value={formData.sitioWeb}
                   onChange={(e) => setFormData({ ...formData, sitioWeb: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="https://misitio.cl"
                 />
               </div>
@@ -323,7 +323,7 @@ export default function NuevoLocalPage() {
               type="text"
               value={formData.telefono}
               onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="+56912345678"
             />
           </div>
@@ -340,7 +340,7 @@ export default function NuevoLocalPage() {
                 if (errores.imagenes) setErrores({ ...errores, imagenes: undefined });
               }}
               className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errores.imagenes ? 'border-red-500' : 'border-gray-200'
+                errores.imagenes ? 'border-red-500' : 'border-[var(--border)]'
               }`}
               placeholder="https://ejemplo.com/img1.jpg, https://ejemplo.com/img2.jpg"
             />
@@ -352,7 +352,7 @@ export default function NuevoLocalPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gray-900 text-white py-4 px-4 rounded-xl font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            className="w-full bg-[var(--primary)] text-white py-4 px-4 rounded-xl font-semibold hover:bg-[var(--primary-light)] disabled:opacity-50 transition-colors"
           >
             {loading ? 'Guardando...' : 'Crear Local'}
           </button>

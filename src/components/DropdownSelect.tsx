@@ -29,21 +29,23 @@ export default function DropdownSelect({ value, onChange, options, className = '
       <button
         type="button"
         onClick={() => setAbierto(!abierto)}
-        className={`w-full flex items-center justify-between gap-1 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${small ? 'px-2 py-1.5 text-xs' : 'px-4 py-2.5'}`}
+        className={`w-full flex items-center justify-between gap-1 bg-[var(--card-bg)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)] ${small ? 'px-2 py-1.5 text-xs' : 'px-4 py-2.5'}`}
       >
         <span>{selected?.label || value}</span>
-        <span className="text-gray-400 text-[10px]">{abierto ? '▲' : '▼'}</span>
+        <svg className={`w-3.5 h-3.5 text-[var(--muted-light)] transition-transform ${abierto ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       {abierto && (
-        <div className="absolute z-[100] mt-1 w-full min-w-[120px] bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+        <div className="absolute z-[100] mt-1 w-full min-w-[120px] bg-[var(--card-bg)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden">
           {options.map(opt => (
             <button
               key={opt.value}
               type="button"
               onClick={() => { onChange(opt.value); setAbierto(false); }}
-              className={`w-full text-left px-3 py-2 ${small ? 'text-xs' : 'text-sm'} hover:bg-gray-50 transition-colors ${opt.value === value ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700'}`}
+              className={`w-full text-left px-3 py-2.5 ${small ? 'text-xs' : 'text-sm'} hover:bg-[var(--bg)] transition-colors ${opt.value === value ? 'text-[var(--primary)] font-medium bg-[var(--primary)]/6' : 'text-[var(--fg)]'}`}
             >
-              {opt.value === value && '✓ '}{opt.label}
+              {opt.value === value && (
+                <svg className="w-3.5 h-3.5 inline mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              )}{opt.label}
             </button>
           ))}
         </div>

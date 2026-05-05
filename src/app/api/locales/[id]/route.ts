@@ -97,8 +97,8 @@ export async function PUT(
         data: {
           nombre: data.nombre,
           descripcion: data.descripcion,
-          categorias: data.categorias,
-          items: data.items,
+          categorias: JSON.stringify(data.categorias),
+          items: JSON.stringify(data.items),
           precio: data.precio,
           direccion: data.direccion,
           latitud: data.latitud,

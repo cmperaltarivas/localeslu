@@ -29,11 +29,18 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q');
   const categoria = searchParams.get('categoria');
+  const orden = searchParams.get('orden') || 'recientes';
 
   const where: Record<string, unknown> = { activo: true };
 
   const locales = await prisma.local.findMany({
     where,
+    include: {
+      resenas: {
+        where: { aprobado: true },
+        select: { calificacion: true },
+      },
+    },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -58,7 +65,20 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return NextResponse.json(filtered);
+  const result = filtered.map(local => {
+    const resenas = local.resenas;
+    const promedio = resenas.length > 0
+      ? resenas.reduce((acc, r) => acc + r.calificacion, 0) / resenas.length
+      : 0;
+    const { resenas: _, ...rest } = local;
+    return { ...rest, rating: Math.round(promedio * 10) / 10, reseñasCount: resenas.length };
+  });
+
+  if (orden === 'mejor-evaluado') {
+    result.sort((a, b) => b.rating - a.rating);
+  }
+
+  return NextResponse.json(result);
 }
 
 export async function POST(request: NextRequest) {

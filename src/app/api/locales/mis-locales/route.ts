@@ -45,12 +45,17 @@ export async function GET() {
         _count: {
           select: { colaboradores: true },
         },
+        colaboradores: {
+          where: { aprobado: false, rechazado: false, bloqueo: false },
+          select: { id: true },
+        },
       },
     });
 
     const result = locales.map(l => ({
       ...l,
       colaboradoresCount: l._count.colaboradores,
+      colaboradoresPendientes: l.colaboradores.length,
     }));
 
     return NextResponse.json(result);
