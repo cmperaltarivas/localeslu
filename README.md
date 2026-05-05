@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Locales La Unión
 
-## Getting Started
+Directorio de locales y negocios de La Unión, Chile. Plataforma colaborativa donde cualquier persona puede agregar, comentar y reseñar negocios locales.
 
-First, run the development server:
+## Tecnologías
+
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **Prisma** + SQLite
+- **Tailwind CSS v4**
+- **NextAuth.js** (Google OAuth)
+- **Google Maps API** (selección de ubicación)
+- **OpenStreetMap** (visualización pública)
+
+## Requisitos
+
+- Node.js 18+
+- Cuenta de Google Cloud (para OAuth y Maps API)
+
+## Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/cmperaltarivas/localeslu.git
+cd localeslu
+
+# Instalar dependencias
+npm install
+```
+
+## Configuración
+
+Crear archivo `.env` en la raíz:
+
+```env
+DATABASE_URL="file:./dev.db"
+
+# Google OAuth (https://console.cloud.google.com)
+GOOGLE_CLIENT_ID=tu_client_id
+GOOGLE_CLIENT_SECRET=tu_client_secret
+
+# NextAuth
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=un_secret_aleatorio
+
+# Google Maps API
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=tu_api_key
+```
+
+## Base de datos
+
+```bash
+# Generar el cliente de Prisma
+npx prisma generate
+
+# Sincronizar el esquema con la base de datos
+npx prisma db push
+```
+
+## Ejecutar
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Administrador
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+El admin se define por email. Por defecto: `cmperaltarivas@gmail.com`
 
-## Learn More
+El panel de administración está en `/admin` y permite:
+- Ver estadísticas generales
+- Gestionar usuarios (activar, desactivar, eliminar)
+- Aprobar o rechazar reseñas
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura del proyecto
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/
+    page.tsx          # Landing page
+    buscar/           # Búsqueda de locales
+    local/[id]/       # Página pública del local
+    auth/             # Inicio de sesión con Google
+    dashboard/        # Panel del usuario (mis locales, colaboraciones)
+    admin/            # Panel de administración
+    api/              # Endpoints REST
+      locales/        # CRUD de locales
+      resenas/        # Reseñas
+      colaboradores/  # Sistema de colaboración
+      ediciones/      # Sugerencias de edición
+      admin/          # Endpoints de admin
+  components/         # Componentes reutilizables
+  lib/                # Utilidades (Prisma, Auth, Google Maps)
+prisma/
+  schema.prisma       # Modelo de datos
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Funcionalidades
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Autenticación con Google (único método)
+- Crear y editar locales con categorías, productos/servicios y precios
+- Mapa interactivo para seleccionar ubicación
+- Sistema de reseñas con aprobación del administrador
+- Búsqueda por nombre, categoría o ubicación
+- Sistema de colaboradores: varios usuarios pueden gestionar un mismo local con aprobación del dueño
+- Sugerencias de edición: los colaboradores proponen cambios que el dueño aprueba o rechaza
+- Panel de administración con estadísticas
