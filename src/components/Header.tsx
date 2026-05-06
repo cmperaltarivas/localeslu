@@ -36,7 +36,7 @@ export default function Header() {
           sessionStorage.setItem(key, '1');
         }
       }
-    } catch (e) { console.error(e); }
+    } catch { }
   };
 
   useEffect(() => {

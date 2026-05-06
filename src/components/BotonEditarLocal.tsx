@@ -26,7 +26,7 @@ export default function BotonEditarLocal({ localId }: Props) {
       const res = await fetch(`/api/colaboradores/estado?localId=${localId}`);
       const data = await res.json();
       setEsEditor(data.estado === 'owner');
-    } catch (e) { console.error(e); }
+    } catch { }
     finally { setCargando(false); }
   };
 

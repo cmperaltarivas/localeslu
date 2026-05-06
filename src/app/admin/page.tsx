@@ -58,7 +58,7 @@ export default function AdminPage() {
       if (resP.ok) setResenasPendientes((await resP.json()).length);
       const resS = await fetch('/api/admin/stats');
       if (resS.ok) setStats(await resS.json());
-    } catch (e) { console.error(e); }
+    } catch { }
     finally { setLoading(false); }
   };
 
@@ -77,7 +77,7 @@ export default function AdminPage() {
       else res = await fetch(`/api/admin/usuarios/${usuarioSeleccionado.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ activo: modalTipo === 'activar' }) });
       if (res.ok) { fetchUsuarios(); setShowModal(false); setUsuarioSeleccionado(null); mostrarToast(modalTipo === 'eliminar' ? 'Usuario eliminado' : modalTipo === 'activar' ? 'Usuario activado' : 'Usuario desactivado', 'success'); }
       else mostrarToast('Error', 'error');
-    } catch (e) { console.error(e); mostrarToast('Error', 'error'); }
+    } catch { mostrarToast('Error', 'error'); }
     finally { setProcesando(false); }
   };
 
@@ -89,7 +89,7 @@ export default function AdminPage() {
         const data = await res.json();
         setResenasUsuario(data);
       }
-    } catch (e) { console.error(e); }
+    } catch { }
   };
 
   const reseñasAprobadas = resenasUsuario.filter(r => r.aprobado);
@@ -110,7 +110,7 @@ export default function AdminPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Administración</h1>
-            <p className="text-gray-500 text-sm mt-0.5">{stats.totalUsuarios} usuarios · {stats.totalLocales} locales · {stats.totalResenas} reseñas</p>
+            <p className="text-gray-600 text-sm mt-0.5">{stats.totalUsuarios} usuarios · {stats.totalLocales} locales · {stats.totalResenas} reseñas</p>
           </div>
           <a href="/admin/resenas" className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl font-medium text-sm transition-colors flex items-center gap-1">
             ⭐ Reseñas {stats.resenasPendientes > 0 && `(${stats.resenasPendientes})`}
@@ -121,7 +121,7 @@ export default function AdminPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-gray-900">{stats.totalUsuarios}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Usuarios</p>
+            <p className="text-xs text-gray-600 mt-0.5">Usuarios</p>
             <div className="flex gap-2 mt-1 text-xs">
               <span className="text-green-600">{stats.usuariosActivos} activos</span>
               <span className="text-red-400">{stats.totalUsuarios - stats.usuariosActivos} inactivos</span>
@@ -129,7 +129,7 @@ export default function AdminPage() {
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-gray-900">{stats.totalLocales}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Locales</p>
+            <p className="text-xs text-gray-600 mt-0.5">Locales</p>
             <div className="flex gap-2 mt-1 text-xs">
               <span className="text-green-600">{stats.localesActivos} activos</span>
               <span className="text-red-400">{stats.totalLocales - stats.localesActivos} inactivos</span>
@@ -137,25 +137,25 @@ export default function AdminPage() {
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-gray-900">{stats.totalResenas}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Reseñas</p>
+            <p className="text-xs text-gray-600 mt-0.5">Reseñas</p>
             {stats.resenasPendientes > 0 && <p className="text-xs text-amber-600 mt-1">{stats.resenasPendientes} pendientes</p>}
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-blue-600">{stats.totalColaboradores}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Colaboraciones</p>
+            <p className="text-xs text-gray-600 mt-0.5">Colaboraciones</p>
           </div>
         </div>
 
         <div className="bg-[var(--card-bg)] rounded-xl shadow-sm border border-[var(--border-light)] p-4 mb-6 flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm">🔍</span>
             <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar usuario..." className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg)] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">×</button>}
+            {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-600">×</button>}
           </div>
           <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
             {(['todos', 'activos', 'inactivos'] as const).map(f => (
               <button key={f} onClick={() => setFiltro(f)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${filtro === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                className={`px-4 py-1.5.5 rounded-lg text-xs font-medium transition-all capitalize ${filtro === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-700'}`}>
                 {f}
               </button>
             ))}
@@ -166,7 +166,7 @@ export default function AdminPage() {
           <div className="bg-[var(--card-bg)] rounded-xl p-12 text-center shadow-sm border border-[var(--border-light)]">
             <div className="text-5xl mb-4">👥</div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Sin resultados</h3>
-            <p className="text-gray-500">No se encontraron usuarios con estos filtros</p>
+            <p className="text-gray-600">No se encontraron usuarios con estos filtros</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -178,24 +178,24 @@ export default function AdminPage() {
                   <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${u.activo ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${u.activo ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-600'}`}>
                           {u.nombre.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className={`font-semibold text-sm truncate ${u.activo ? 'text-gray-900' : 'text-gray-400'}`}>{u.nombre}</p>
-                          <p className="text-xs text-gray-400 truncate">{u.email}</p>
+                          <p className={`font-semibold text-sm truncate ${u.activo ? 'text-gray-900' : 'text-gray-600'}`}>{u.nombre}</p>
+                          <p className="text-xs text-gray-600 truncate">{u.email}</p>
                         </div>
                       </div>
-                      <span className={`flex-shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full ${u.activo ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                      <span className={`flex-shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full ${u.activo ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
                         {u.activo ? 'Activo' : 'Inactivo'}
                       </span>
                     </div>
 
                     <div className="flex gap-3 mb-4">
-                      <button onClick={() => verResenasUsuario(u)} className="flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg transition-colors">
+                      <button onClick={() => verResenasUsuario(u)} className="flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-lg transition-colors">
                         ⭐ {u._count?.resenas || 0}
                       </button>
-                      <button onClick={() => setVerLocales(u)} className="flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg transition-colors">
+                      <button onClick={() => setVerLocales(u)} className="flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors">
                         🏪 {u.locales.length}
                         {localesInactivos > 0 && <span className="text-red-400 ml-0.5">· {localesInactivos} inact.</span>}
                       </button>
@@ -233,7 +233,7 @@ export default function AdminPage() {
               </div>
               <div className="flex gap-2">
                 <button onClick={() => { setShowModal(false); setUsuarioSeleccionado(null); }} className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-sm">Cancelar</button>
-                <button onClick={confirmarAccion} disabled={procesando} className={`flex-1 py-2 rounded-lg text-white font-semibold text-sm hover:opacity-90 transition-colors ${modalTipo === 'eliminar' ? 'bg-red-600 hover:bg-red-700' : modalTipo === 'activar' ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-600 hover:bg-orange-700'}`}>{procesando ? '...' : modalTipo === 'eliminar' ? 'Eliminar' : modalTipo === 'activar' ? 'Activar' : 'Desactivar'}</button>
+                <button onClick={confirmarAccion} disabled={procesando} className={`flex-1 py-2 rounded-lg text-white font-semibold text-sm hover:opacity-90 transition-colors ${modalTipo === 'eliminar' ? 'bg-red-600 hover:bg-red-700' : modalTipo === 'activar' ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-600 hover:bg-orange-700'}`}>{procesando ? <span className="spinner" /> : modalTipo === 'eliminar' ? 'Eliminar' : modalTipo === 'activar' ? 'Activar' : 'Desactivar'}</button>
               </div>
             </div>
           </div>
@@ -243,19 +243,19 @@ export default function AdminPage() {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-[var(--card-bg)] rounded-xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto">
               <div className="flex justify-between mb-4"><h3 className="font-bold text-lg">Reseñas de {verResenas.nombre}</h3><button onClick={() => setVerResenas(null)}>✕</button></div>
-              <div className="flex gap-4 mb-4 text-sm"><span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">✓ {reseñasAprobadas.length}</span><span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">⏳ {reseñasPendientesArr.length}</span></div>
+              <div className="flex gap-4 mb-4 text-sm"><span className="bg-green-100 text-green-700 px-3 py-1.5 rounded-full">✓ {reseñasAprobadas.length}</span><span className="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full">⏳ {reseñasPendientesArr.length}</span></div>
               {!resenasUsuario.length ? <p className="text-center py-4">Sin reseñas</p> : (
                 <div className="space-y-3">
                   {resenasUsuario.map(r => (
                     <div key={r.id} className={`p-3 rounded-lg ${r.aprobado ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'}`}>
                       <div className="flex justify-between mb-1">
                         <div className="flex gap-2"><span>{r.aprobado ? '✓' : '⏳'}</span><span>★ {r.calificacion}/5</span></div>
-                        <span className="text-xs text-gray-400">{new Date(r.createdAt).toLocaleDateString('es-CL')}</span>
+                        <span className="text-xs text-gray-600">{new Date(r.createdAt).toLocaleDateString('es-CL')}</span>
                       </div>
                       <p className="text-sm">
                         <Link 
                           href={`/admin/resenas?tab=${r.aprobado ? 'publicadas' : 'pendientes'}`} 
-                          className={`px-2 py-1 rounded-full text-xs ${r.aprobado ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'}`}
+                          className={`px-2 py-1.5 rounded-full text-xs ${r.aprobado ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'}`}
                         >
                           🏪 {r.local?.nombre}
                         </Link>
@@ -287,7 +287,7 @@ export default function AdminPage() {
                       )}
                       {l.activo ? <span className="text-green-600">✓</span> : <span className="text-red-600">✗</span>}
                     </div>
-                      <p className="text-xs text-gray-500">{JSON.parse(l.categorias).join(', ')}</p>
+                      <p className="text-xs text-gray-600">{JSON.parse(l.categorias).join(', ')}</p>
                     </div>
                   ))}
                 </div>

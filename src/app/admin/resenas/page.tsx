@@ -82,8 +82,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
       const isPublicadas = currentTab === 'publicadas';
       setVerificadas(isPublicadas);
       setResenas(isPublicadas ? dataPub : dataP);
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
     } finally {
       setCargando(false);
     }
@@ -105,8 +104,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
       }
       
       setResenas(data);
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
     } finally {
       setCargando(false);
     }
@@ -149,8 +147,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
       } else {
         mostrarToast('Error al eliminar', 'error');
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
       mostrarToast('Error de conexión', 'error');
     } finally {
       setEliminando(null);
@@ -173,8 +170,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
       } else {
         mostrarToast('Error al aprobar', 'error');
       }
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
       mostrarToast('Error de conexión', 'error');
     } finally {
       setEliminando(null);
@@ -184,7 +180,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
   if (status === 'loading' || cargando) {
     return (
       <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
-        <p className="text-gray-500">Cargando...</p>
+        <p className="text-gray-600">Cargando...</p>
       </div>
     );
   }
@@ -197,7 +193,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
             <h1 className="text-2xl font-bold text-gray-900">
               Gestión de Reseñas
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-600 text-sm mt-1">
               {contadorPendientes + contadorPublicadas} reseñas en total
             </p>
           </div>
@@ -244,7 +240,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
         {resenasFiltradas.length === 0 ? (
           <div className="bg-[var(--card-bg)] rounded-xl p-12 shadow-sm text-center">
             <p className="text-4xl mb-2">📭</p>
-            <p className="text-gray-500">
+            <p className="text-gray-600">
               {busqueda 
                 ? 'No se encontraron reseñas' 
                 : verificadas 
@@ -261,11 +257,11 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-yellow-500 text-lg">★</span>
                       <span className="font-bold text-gray-900">{resena.calificacion}/5</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-600">
                         por {resena.user.nombre}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
                       <span>📍</span>
                       <span>para:</span>
                       <Link 
@@ -278,7 +274,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
                     {resena.comentario && (
                       <p className="text-gray-600 text-sm mt-2 bg-[var(--bg)] p-2 rounded">{resena.comentario}</p>
                     )}
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-600">
                       {resena.user.email} • {new Date(resena.createdAt).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -297,7 +293,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
                       disabled={eliminando === resena.id}
                       className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50"
                     >
-                      {eliminando === resena.id ? '...' : '🗑️'}
+                      {eliminando === resena.id ? <span className="spinner" /> : '🗑️'}
                     </button>
                   </div>
                 </div>
@@ -317,7 +313,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
               <h3 className="text-xl font-bold text-gray-900">
                 ¿Eliminar reseña?
               </h3>
-              <p className="text-gray-500 mt-2">
+              <p className="text-gray-600 mt-2">
                 Esta acción no se puede deshacer.
               </p>
             </div>
@@ -333,7 +329,7 @@ const verificadasFromUrl = searchParams.get('tab') === 'publicadas';
                 disabled={eliminando === mostrarModalEliminar}
                 className="flex-1 bg-red-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
               >
-                {eliminando === mostrarModalEliminar ? 'Eliminando...' : 'Eliminar'}
+                {eliminando === mostrarModalEliminar ? <span className="spinner" /> : 'Eliminar'}
               </button>
             </div>
           </div>

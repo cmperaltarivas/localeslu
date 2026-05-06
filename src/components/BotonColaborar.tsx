@@ -18,7 +18,7 @@ export default function BotonColaborar({ localId, ownerId }: Props) {
   }, [status]);
 
   const fetchEstado = async () => {
-    try { const r = await fetch(`/api/colaboradores/estado?localId=${localId}`); setEstado((await r.json()).estado); } catch (e) { console.error(e); } finally { setCargando(false); }
+    try { const r = await fetch(`/api/colaboradores/estado?localId=${localId}`); setEstado((await r.json()).estado); } catch { } finally { setCargando(false); }
   };
 
   const solicitarColaboracion = async () => {
@@ -28,7 +28,7 @@ export default function BotonColaborar({ localId, ownerId }: Props) {
       const data = await res.json();
       if (res.ok) { setEstado('pendiente'); mostrarToast('Solicitud enviada', 'success'); }
       else { if (data.error.includes('bloqueado')) setEstado('bloqueado'); if (data.error.includes('Ya eres')) setEstado('pendiente'); if (!data.error.includes('owner')) mostrarToast(data.error, 'error'); }
-    } catch (e) { console.error(e); } finally { setSolicitando(false); }
+    } catch { } finally { setSolicitando(false); }
   };
 
   if (status === 'loading' || cargando) {
@@ -58,7 +58,7 @@ export default function BotonColaborar({ localId, ownerId }: Props) {
   return (
     <button onClick={solicitarColaboracion} disabled={solicitando}
       className="w-full btn-primary">
-      {solicitando ? 'Enviando...' : (
+      {solicitando ? <span className="spinner" /> : (
         <>
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Solicitar colaboración

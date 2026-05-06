@@ -52,7 +52,7 @@ export default function NuevoLocalPage() {
   if (status === 'loading') {
     return (
       <div className="min-h-[calc(100vh-73px)] flex items-center justify-center">
-        <p className="text-gray-500">Cargando...</p>
+        <p className="text-gray-600">Cargando...</p>
       </div>
     );
   }
@@ -354,7 +354,7 @@ export default function NuevoLocalPage() {
             disabled={loading}
             className="w-full bg-[var(--primary)] text-white py-4 px-4 rounded-xl font-semibold hover:bg-[var(--primary-light)] disabled:opacity-50 transition-colors"
           >
-            {loading ? 'Guardando...' : 'Crear Local'}
+            {loading ? <span className="spinner" /> : 'Crear Local'}
           </button>
         </form>
       </div>

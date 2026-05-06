@@ -244,7 +244,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
       <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
         <div className="bg-white rounded-2xl p-8">
-          <p className="text-gray-500">Cargando...</p>
+          <p className="text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -263,7 +263,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
           <h2 className="text-xl font-bold text-gray-900">Editar Local</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            className="text-gray-600 hover:text-gray-600 text-2xl leading-none"
           >
             ×
           </button>
@@ -328,7 +328,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
               </button>
             </div>
             {formData.items.length === 0 ? (
-              <p className="text-gray-400 text-sm">Agrega los productos o servicios que ofreces</p>
+              <p className="text-gray-600 text-sm">Agrega los productos o servicios que ofreces</p>
             ) : (
               <div className="space-y-3">
                 {formData.items.map((item, index) => (
@@ -389,7 +389,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
 
           <div className="border-t border-gray-200 pt-4">
             <h3 className="font-semibold text-gray-900 mb-3">📍 Ubicación</h3>
-            <p className="text-sm text-gray-500 mb-2">
+            <p className="text-sm text-gray-600 mb-2">
               {formData.latitud && formData.longitud ? 'Haz clic en el mapa para cambiar la ubicación' : 'Haz clic en el mapa para seleccionar la ubicación'}
             </p>
             <MapPicker
@@ -400,7 +400,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
             {formData.latitud && formData.longitud && (
               <div className="mt-2 p-2 bg-green-50 rounded-lg text-sm text-green-700">
                 ✓ Ubicación seleccionada
-                <span className="ml-2 text-gray-500">
+                <span className="ml-2 text-gray-600">
                   ({parseFloat(formData.latitud).toFixed(5)}, {parseFloat(formData.longitud).toFixed(5)})
                 </span>
               </div>
@@ -424,7 +424,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
             <h3 className="font-semibold text-gray-900 mb-3">📱 Presencia online (opcional)</h3>
             <div className="space-y-3">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">📷</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">📷</span>
                 <input
                   type="text"
                   value={formData.redesSociales}
@@ -434,7 +434,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
                 />
               </div>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🌐</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600">🌐</span>
                 <input
                   type="text"
                   value={formData.sitioWeb}
@@ -499,7 +499,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
               disabled={saving || !hayCambios}
               className="flex-1 bg-gray-900 text-white py-3 px-4 rounded-xl font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? <span className="spinner" /> : 'Guardar Cambios'}
             </button>
           </div>
         </form>

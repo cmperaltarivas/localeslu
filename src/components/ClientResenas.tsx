@@ -158,7 +158,7 @@ export default function ClientResenas({ localId, resenasIniciales }: Props) {
             disabled={enviando}
             className="btn-primary !w-full"
           >
-            {enviando ? 'Enviando...' : 'Enviar reseña'}
+            {enviando ? <span className="spinner" /> : 'Enviar reseña'}
           </button>
         </form>
       ) : (

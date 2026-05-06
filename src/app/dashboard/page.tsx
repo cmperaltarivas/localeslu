@@ -66,24 +66,24 @@ if (status === 'authenticated') {
   }, [status, searchParams]);
 
   const fetchLocales = async () => {
-    try { const res = await fetch('/api/locales/mis-locales'); if (res.ok) setLocales(await res.json()); } catch (e) { console.error(e); } finally { setLoading(false); }
+    try { const res = await fetch('/api/locales/mis-locales'); if (res.ok) setLocales(await res.json()); } catch { } finally { setLoading(false); }
   };
   const fetchColaborando = async () => {
-    try { const res = await fetch('/api/colaboradores/mis-colaboraciones'); if (res.ok) setColaborando(await res.json()); } catch (e) { console.error(e); }
+    try { const res = await fetch('/api/colaboradores/mis-colaboraciones'); if (res.ok) setColaborando(await res.json()); } catch { }
   };
   const fetchEdicionesPendientes = async () => {
-    try { const res = await fetch('/api/ediciones?recibidas=true'); if (res.ok) setEdicionesPendientes(await res.json()); } catch (e) { console.error(e); }
+    try { const res = await fetch('/api/ediciones?recibidas=true'); if (res.ok) setEdicionesPendientes(await res.json()); } catch { }
   };
   const notificarHeader = () => window.dispatchEvent(new CustomEvent('notificaciones'));
   const fetchResenasPendientes = async () => {
-    try { const res = await fetch('/api/resenas/mis-locales'); if (res.ok) setResenasPendientes(await res.json()); } catch (e) { console.error(e); }
+    try { const res = await fetch('/api/resenas/mis-locales'); if (res.ok) setResenasPendientes(await res.json()); } catch { }
   };
   const gestionarResena = async (id: string, aprobado: boolean) => {
     try {
       const res = await fetch('/api/resenas/admin', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, aprobado }) });
       if (res.ok) { fetchResenasPendientes(); notificarHeader(); mostrarToast(aprobado ? 'Reseña aprobada' : 'Reseña rechazada', 'success'); }
       else { const d = await res.json(); mostrarToast(d.error || 'Error', 'error'); }
-    } catch (e) { console.error(e); }
+    } catch { }
   };
 
   const gestionarEdicion = async (eid: string, accion: 'aprobar' | 'rechazar') => {
@@ -91,14 +91,14 @@ if (status === 'authenticated') {
       const res = await fetch(`/api/ediciones/${eid}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ edicionId: eid, accion }) });
       if (res.ok) { fetchEdicionesPendientes(); notificarHeader(); if (accion === 'aprobar') fetchLocales(); mostrarToast(accion === 'aprobar' ? 'Sugerencia aprobada' : 'Sugerencia rechazada', 'success'); }
       else mostrarToast('Error al gestionar', 'error');
-    } catch (e) { console.error(e); }
+    } catch { }
   };
 
   const abrirColaboradores = async (local: Local) => {
     try {
       const res = await fetch(`/api/colaboradores?localId=${local.id}`);
       if (res.ok) { setLocalColaboradores(await res.json()); setLocalMostrandoColaboradores(local); setShowColaboradoresModal(true); }
-    } catch (e) { console.error(e); }
+    } catch { }
   };
 
   const gestionarColaborador = async (cid: string, accion: 'aprobar' | 'rechazar' | 'bloquear' | 'desbloquear') => {
@@ -122,7 +122,7 @@ if (status === 'authenticated') {
         abrirColaboradores(localMostrandoColaboradores!);
         mostrarToast('Error al gestionar', 'error');
       }
-    } catch (e) { notificarHeader(); fetchLocales(); abrirColaboradores(localMostrandoColaboradores!); console.error(e); }
+    } catch { notificarHeader(); fetchLocales(); abrirColaboradores(localMostrandoColaboradores!); }
   };
 
   const eliminarColaborador = async (cid: string) => {
@@ -137,7 +137,7 @@ if (status === 'authenticated') {
         abrirColaboradores(localMostrandoColaboradores!);
         mostrarToast('Error al eliminar', 'error');
       }
-    } catch (e) { notificarHeader(); fetchLocales(); abrirColaboradores(localMostrandoColaboradores!); console.error(e); }
+    } catch { notificarHeader(); fetchLocales(); abrirColaboradores(localMostrandoColaboradores!); }
   };
 
   const toggleActivo = async (local: Local) => {
@@ -145,7 +145,7 @@ if (status === 'authenticated') {
       const res = await fetch(`/api/locales/${local.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ activo: !local.activo }) });
       if (res.ok) { fetchLocales(); mostrarToast(local.activo ? 'Local desactivado' : 'Local activado', 'success'); }
       else mostrarToast('Error al cambiar estado', 'error');
-    } catch (e) { console.error(e); }
+    } catch { }
   };
 
   const abrirEditor = (l: Local) => { setLocalEditando(l); setShowEditarModal(true); };
@@ -157,7 +157,7 @@ if (status === 'authenticated') {
       const res = await fetch(`/api/locales/${localAEliminar.id}`, { method: 'DELETE' });
       if (res.ok) { fetchLocales(); setShowEliminarModal(false); setLocalAEliminar(null); mostrarToast('Local eliminado', 'success'); }
       else mostrarToast('Error al eliminar', 'error');
-    } catch (e) { console.error(e); } finally { setEliminando(false); }
+    } catch { } finally { setEliminando(false); }
   };
 
   const tabs = [
@@ -181,7 +181,7 @@ if (status === 'authenticated') {
   }, [locales, filtroEstado, busqueda]);
 
   if (status === 'loading' || loading) {
-    return <div className="min-h-[calc(100vh-73px)] flex items-center justify-center bg-[var(--bg)]"><div className="flex items-center gap-3 text-gray-400"><span className="animate-spin text-xl">⏳</span><p>Cargando panel...</p></div></div>;
+    return <div className="min-h-[calc(100vh-73px)] flex items-center justify-center bg-[var(--bg)]"><div className="flex items-center gap-3 text-gray-600"><span className="animate-spin text-xl">⏳</span><p>Cargando panel...</p></div></div>;
   }
 
   const formatValor = (key: string, val: any): string => {
@@ -219,27 +219,27 @@ if (status === 'authenticated') {
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 mb-8">
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-[var(--fg)]">{totalLocales}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Locales</p>
+            <p className="text-xs text-gray-600 mt-0.5">Locales</p>
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-green-600">{activos}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Activos</p>
+            <p className="text-xs text-gray-600 mt-0.5">Activos</p>
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-red-500">{totalLocales - activos}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Inactivos</p>
+            <p className="text-xs text-gray-600 mt-0.5">Inactivos</p>
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)]">
             <p className="text-2xl font-bold text-blue-600">{colaborando.length}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Colaboraciones</p>
+            <p className="text-xs text-gray-600 mt-0.5">Colaboraciones</p>
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)] relative">
             <p className="text-2xl font-bold text-amber-600">{edicionesPendientes.length}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Ediciones</p>
+            <p className="text-xs text-gray-600 mt-0.5">Ediciones</p>
           </div>
           <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)] relative">
-            <p className={`text-2xl font-bold ${pendientesColab > 0 ? 'text-[var(--accent)]' : 'text-gray-400'}`}>{pendientesColab}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Solicitudes</p>
+            <p className={`text-2xl font-bold ${pendientesColab > 0 ? 'text-[var(--accent)]' : 'text-gray-600'}`}>{pendientesColab}</p>
+            <p className="text-xs text-gray-600 mt-0.5">Solicitudes</p>
             {pendientesColab > 0 && (
               <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--accent)] animate-pulse-soft" />
             )}
@@ -272,10 +272,10 @@ if (status === 'authenticated') {
               {/* Filter bar */}
               <div className="bg-[var(--card-bg)] rounded-xl p-4 shadow-sm border border-[var(--border-light)] mb-4 flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm">🔍</span>
                   <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar local..."
                     className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg)] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                  {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">×</button>}
+                  {busqueda && <button onClick={() => setBusqueda('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-600">×</button>}
                 </div>
                 <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                   {(['todos', 'activos', 'inactivos'] as const).map(f => (
@@ -289,7 +289,7 @@ if (status === 'authenticated') {
 
               {filtrados.length === 0 ? (
                 <div className="bg-[var(--card-bg)] rounded-xl p-12 text-center shadow-sm border border-[var(--border-light)]">
-                  <p className="text-gray-400">No se encontraron locales con estos filtros</p>
+                  <p className="text-gray-600">No se encontraron locales con estos filtros</p>
                   <button onClick={() => { setBusqueda(''); setFiltroEstado('todos'); }} className="text-[var(--primary)] text-sm mt-2 hover:underline">Limpiar filtros</button>
                 </div>
               ) : (
@@ -330,8 +330,8 @@ if (status === 'authenticated') {
                         <span className="text-[10px] font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Colaborador</span>
                       </div>
                       <Link href={`/local/${colab.local.id}?from=panel`}><h3 className="font-semibold text-[var(--fg)] mb-1 group-hover:text-[var(--primary)] transition-colors">{colab.local.nombre}</h3></Link>
-                      <p className="text-xs text-gray-400 mb-3">Dueño: {colab.local.user?.nombre}</p>
-                      <p className="text-xs text-gray-400 line-clamp-2 mb-3">{colab.local.descripcion}</p>
+                      <p className="text-xs text-gray-600 mb-3">Dueño: {colab.local.user?.nombre}</p>
+                      <p className="text-xs text-gray-600 line-clamp-2 mb-3">{colab.local.descripcion}</p>
                     </div>
                     <div className="border-t border-[var(--border-light)]">
                       <button onClick={() => { setLocalEditando({ ...colab.local, userId: colab.local.userId }); setShowEditarModal(true); }}
@@ -403,7 +403,7 @@ if (status === 'authenticated') {
                         <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-bold text-sm">{ed.usuario?.nombre?.charAt(0) || '?'}</div>
                         <div>
                           <p className="font-medium text-[var(--fg)] text-sm">{ed.usuario?.nombre}</p>
-                          <p className="text-xs text-gray-400">{ed.local?.nombre} · {entries.length} cambio{entries.length !== 1 ? 's' : ''}</p>
+                          <p className="text-xs text-gray-600">{ed.local?.nombre} · {entries.length} cambio{entries.length !== 1 ? 's' : ''}</p>
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -417,7 +417,7 @@ if (status === 'authenticated') {
                         <div className="mt-2 space-y-1">
                           {entries.map(([key, val]: [string, any]) => (
                             <div key={key} className="flex items-center gap-2 text-xs">
-                              <span className="text-gray-400 w-28 flex-shrink-0">{labels[key] || key}</span>
+                              <span className="text-gray-600 w-28 flex-shrink-0">{labels[key] || key}</span>
                               <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded">{formatValor(key, val)}</span>
                             </div>
                           ))}
@@ -445,7 +445,7 @@ if (status === 'authenticated') {
             </div>
             <div className="flex gap-3">
               <button onClick={() => { setShowEliminarModal(false); setLocalAEliminar(null); }} className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-sm">Cancelar</button>
-              <button onClick={eliminarLocal} disabled={eliminando} className="flex-1 bg-red-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors text-sm">{eliminando ? 'Eliminando...' : 'Eliminar'}</button>
+              <button onClick={eliminarLocal} disabled={eliminando} className="flex-1 bg-red-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors text-sm">{eliminando ? <span className="spinner" /> : 'Eliminar'}</button>
             </div>
           </div>
         </div>
@@ -456,11 +456,11 @@ if (status === 'authenticated') {
           <div className="bg-[var(--card-bg)] rounded-xl shadow-2xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-[var(--fg)]">Colaboradores</h3>
-              <button onClick={() => setShowColaboradoresModal(false)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+              <button onClick={() => setShowColaboradoresModal(false)} className="text-gray-600 hover:text-gray-600 text-xl">×</button>
             </div>
-            <p className="text-xs text-gray-400 mb-4">{localMostrandoColaboradores?.nombre}</p>
+            <p className="text-xs text-gray-600 mb-4">{localMostrandoColaboradores?.nombre}</p>
             {localColaboradores.length === 0 ? (
-              <p className="text-gray-400 text-center py-8 text-sm">No hay colaboradores aún</p>
+              <p className="text-gray-600 text-center py-8 text-sm">No hay colaboradores aún</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {localColaboradores.map(colab => (
@@ -469,7 +469,7 @@ if (status === 'authenticated') {
                       <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-xs">{colab.usuario?.nombre?.charAt(0) || '?'}</div>
                       <div>
                         <p className="text-sm font-medium text-[var(--fg)]">{colab.usuario?.nombre}</p>
-                        <p className="text-xs text-gray-400">{colab.usuario?.email}</p>
+                        <p className="text-xs text-gray-600">{colab.usuario?.email}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -479,8 +479,8 @@ if (status === 'authenticated') {
                             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                             Aprobado
                           </span>
-                          <button onClick={() => gestionarColaborador(colab.id, 'bloquear')} className="text-[10px] font-medium text-red-500 hover:bg-red-50 px-1.5 py-1 rounded transition-colors whitespace-nowrap">Bloquear</button>
-                          <button onClick={() => { setColaboradorAEliminar(colab); setShowEliminarColaboradorModal(true); }} className="text-red-400 hover:bg-red-50 p-1 rounded transition-colors">
+                          <button onClick={() => gestionarColaborador(colab.id, 'bloquear')} className="text-[10px] font-medium text-red-500 hover:bg-red-50 px-2 py-1.5 rounded transition-colors whitespace-nowrap">Bloquear</button>
+                          <button onClick={() => { setColaboradorAEliminar(colab); setShowEliminarColaboradorModal(true); }} className="text-red-400 hover:bg-red-50 p-1.5 rounded transition-colors">
                             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                           </button>
                         </>
@@ -491,7 +491,7 @@ if (status === 'authenticated') {
                             Bloqueado
                           </span>
                           <button onClick={() => gestionarColaborador(colab.id, 'desbloquear')} className="text-[10px] font-medium text-green-600 hover:bg-green-50 px-1.5 py-1 rounded transition-colors whitespace-nowrap">Desbloquear</button>
-                          <button onClick={() => { setColaboradorAEliminar(colab); setShowEliminarColaboradorModal(true); }} className="text-red-400 hover:bg-red-50 p-1 rounded transition-colors">
+                          <button onClick={() => { setColaboradorAEliminar(colab); setShowEliminarColaboradorModal(true); }} className="text-red-400 hover:bg-red-50 p-1.5 rounded transition-colors">
                             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                           </button>
                         </>
@@ -502,7 +502,7 @@ if (status === 'authenticated') {
                             Rechazado
                           </span>
                           <button onClick={() => gestionarColaborador(colab.id, 'aprobar')} className="text-[10px] font-medium text-green-600 hover:bg-green-50 px-1.5 py-1 rounded transition-colors whitespace-nowrap">Reactivar</button>
-                          <button onClick={() => { setColaboradorAEliminar(colab); setShowEliminarColaboradorModal(true); }} className="text-red-400 hover:bg-red-50 p-1 rounded transition-colors">
+                          <button onClick={() => { setColaboradorAEliminar(colab); setShowEliminarColaboradorModal(true); }} className="text-red-400 hover:bg-red-50 p-1.5 rounded transition-colors">
                             <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                           </button>
                         </>

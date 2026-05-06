@@ -172,7 +172,7 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
           <h2 className="text-xl font-bold text-[var(--fg)]">Nuevo Local</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            className="text-gray-600 hover:text-gray-600 text-2xl leading-none"
           >
             ×
           </button>
@@ -431,7 +431,7 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
               disabled={loading}
               className="flex-1 bg-[var(--primary)] text-white py-3 px-4 rounded-xl font-semibold hover:bg-[var(--primary-light)] disabled:opacity-50 transition-colors"
             >
-              {loading ? 'Creando...' : 'Crear Local'}
+              {loading ? <span className="spinner" /> : 'Crear Local'}
             </button>
           </div>
         </form>

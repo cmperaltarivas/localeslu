@@ -8,7 +8,7 @@ export default function AdminResenasLayout({
   return (
     <Suspense fallback={
       <div className="min-h-[calc(100vh-73px)] flex items-center justify-center">
-        <p className="text-gray-500">Cargando...</p>
+        <p className="text-gray-600">Cargando...</p>
       </div>
     }>
       {children}

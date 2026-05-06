@@ -86,7 +86,7 @@ export default function EditarLocalPage({ params }: Props) {
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-[calc(100vh-73px)] flex items-center justify-center">
-        <p className="text-gray-500">Cargando...</p>
+        <p className="text-gray-600">Cargando...</p>
       </div>
     );
   }
@@ -309,7 +309,7 @@ export default function EditarLocalPage({ params }: Props) {
               disabled={saving}
               className="flex-1 bg-gray-900 text-white py-4 px-4 rounded-xl font-semibold hover:bg-gray-800 disabled:opacity-50 transition-colors"
             >
-              {saving ? 'Guardando...' : 'Guardar Cambios'}
+              {saving ? <span className="spinner" /> : 'Guardar Cambios'}
             </button>
             <button
               type="button"
