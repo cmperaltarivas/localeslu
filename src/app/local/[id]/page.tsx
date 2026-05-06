@@ -4,6 +4,8 @@ import ClientResenas from '@/components/ClientResenas';
 import BackButton from '@/components/BackButton';
 import BotonColaborar from '@/components/BotonColaborar';
 import BotonEditarLocal from '@/components/BotonEditarLocal';
+import BotonCompartir from '@/components/BotonCompartir';
+import BotonFavorito from '@/components/BotonFavorito';
 
 interface Props { params: Promise<{ id: string }> }
 
@@ -71,7 +73,10 @@ export default async function LocalPage({ params }: Props) {
               <span key={cat} className="tag tag-forest">{cat}</span>
             ))}
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[var(--fg)] tracking-tight">{local.nombre}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-[var(--fg)] tracking-tight">{local.nombre}</h1>
+            <BotonFavorito localId={local.id} className="flex-shrink-0" />
+          </div>
 
           {avg > 0 ? (
             <div className="flex items-center gap-2 mt-3">
@@ -135,6 +140,7 @@ export default async function LocalPage({ params }: Props) {
               <span className="capitalize">{r.tipo}</span>
             </a>
           ))}
+          <BotonCompartir nombre={local.nombre} />
         </div>
 
         {/* Description */}

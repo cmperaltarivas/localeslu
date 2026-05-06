@@ -20,6 +20,7 @@ model User {
   resenas       Resena[]
   colaboradorEn Colaborador[]
   ediciones     Edicion[]
+  favoritos     Favorito[]
 }
 
 model Local {
@@ -45,6 +46,7 @@ model Local {
   resenas       Resena[]
   colaboradores Colaborador[]
   ediciones     Edicion[]
+  favoritos     Favorito[]
 }
 
 model Colaborador {
@@ -91,4 +93,16 @@ model Resena {
 
   local Local @relation(fields: [localId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Favorito {
+  id        String   @id @default(uuid())
+  userId    String
+  localId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  local Local @relation(fields: [localId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, localId])
 }

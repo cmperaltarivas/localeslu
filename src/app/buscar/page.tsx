@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import DropdownSelect from '@/components/DropdownSelect';
 
@@ -14,6 +14,8 @@ interface Local {
   imagenes: string;
   rating: number;
   reseñasCount: number;
+  latitud: number | null;
+  longitud: number | null;
 }
 
 const categorias = [
@@ -35,6 +37,8 @@ function BuscarContent() {
   const [q, setQ] = useState('');
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'Todas');
   const [orden, setOrden] = useState('recientes');
+  const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(null);
+  const [usandoUbicacion, setUsandoUbicacion] = useState(false);
 
   useEffect(() => {
     fetchLocales();
@@ -52,6 +56,21 @@ function BuscarContent() {
     setLocales(data);
     setLoading(false);
   };
+
+  const localesMostrados = useMemo(() => {
+    if (!ubicacion) return locales;
+    const dist = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+    return locales
+      .filter(l => l.latitud && l.longitud)
+      .map(l => ({ ...l, _distancia: dist(ubicacion.lat, ubicacion.lng, l.latitud!, l.longitud!) }))
+      .sort((a: any, b: any) => a._distancia - b._distancia);
+  }, [locales, ubicacion]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -93,17 +112,21 @@ function BuscarContent() {
             </div>
 
             <div>
-              <label className="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Ordenar por</label>
-              <DropdownSelect value={orden} onChange={setOrden} options={ordenes} className="w-full" />
-            </div>
-
-            <div className="hidden md:flex items-end">
-              {(q || categoria !== 'Todas' || orden !== 'recientes') && (
-                <button onClick={aplicarFiltros} className="btn-ghost text-sm">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  Limpiar filtros
-                </button>
-              )}
+              <label className="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Ubicación</label>
+              <button
+                onClick={() => {
+                  if (ubicacion) { setUbicacion(null); setUsandoUbicacion(false); return; }
+                  setUsandoUbicacion(true);
+                  navigator.geolocation?.getCurrentPosition(
+                    pos => setUbicacion({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                    () => setUsandoUbicacion(false),
+                    { enableHighAccuracy: false }
+                  );
+                }}
+                className={`w-full px-4 py-3 rounded-xl text-sm font-medium border transition-colors ${ubicacion ? 'bg-green-50 text-green-700 border-green-200' : 'bg-[var(--card-bg)] text-[var(--fg-muted)] border-[var(--border)] hover:border-[var(--primary)]'}`}
+              >
+                {usandoUbicacion && !ubicacion ? 'Obteniendo ubicación...' : ubicacion ? '✓ Usando tu ubicación' : '📍 Cerca de mí'}
+              </button>
             </div>
           </div>
         </div>
@@ -138,10 +161,11 @@ function BuscarContent() {
         ) : (
           <>
             <p className="text-sm text-[var(--fg-muted)] mb-6">
-              {locales.length} {locales.length === 1 ? 'resultado' : 'resultados'}
+              {localesMostrados.length} {localesMostrados.length === 1 ? 'resultado' : 'resultados'}
+              {ubicacion && ' · ordenados por cercanía'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {locales.map((local) => (
+              {localesMostrados.map((local: any) => (
                 <Link
                   key={local.id}
                   href={`/local/${local.id}`}
@@ -202,7 +226,7 @@ function BuscarContent() {
                     )}
                   </div>
                 </Link>
-              ))}
+))}
             </div>
           </>
         )}
