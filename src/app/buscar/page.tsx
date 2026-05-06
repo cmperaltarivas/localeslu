@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import DropdownSelect from '@/components/DropdownSelect';
+import { useCategorias } from '@/hooks/useCategorias';
 
 interface Local {
   id: string;
@@ -18,12 +19,6 @@ interface Local {
   longitud: number | null;
 }
 
-const categorias = [
-  'Todas', 'Alimentación', 'Vestimenta', 'Hogar', 'Servicios',
-  'Tecnología', 'Salud', 'Educación', 'Entretenimiento',
-  'Belleza', 'Deportes', 'Otros',
-];
-
 const ordenes = [
   { value: 'recientes', label: 'Más recientes' },
   { value: 'mejor-evaluado', label: 'Mejor evaluados' },
@@ -32,6 +27,8 @@ const ordenes = [
 function BuscarContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const categorias = useCategorias();
+  const categoriasConTodas = ['Todas', ...categorias];
   const [locales, setLocales] = useState<Local[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -108,7 +105,7 @@ function BuscarContent() {
 
             <div>
               <label className="block text-sm text-[var(--fg-muted)] mb-2 font-medium">Categoría</label>
-              <DropdownSelect value={categoria} onChange={setCategoria} options={categorias.map(c => ({ value: c, label: c }))} className="w-full" />
+              <DropdownSelect value={categoria} onChange={setCategoria} options={categoriasConTodas.map(c => ({ value: c, label: c }))} className="w-full" />
             </div>
 
             <div>

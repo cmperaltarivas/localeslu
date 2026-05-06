@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { mostrarToast } from '@/components/Toast';
+import CategoriasManager from '@/components/CategoriasManager';
 
 interface Usuario {
   id: string;
@@ -221,6 +222,8 @@ export default function AdminPage() {
             })}
           </div>
         )}
+
+        <CategoriasManager />
 
         {showModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">

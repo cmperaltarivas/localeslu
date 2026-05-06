@@ -6,20 +6,7 @@ import { useSession } from 'next-auth/react';
 import { notFound } from 'next/navigation';
 import { mostrarToast } from '@/components/Toast';
 import DropdownSelect from '@/components/DropdownSelect';
-
-const categorias = [
-  'Alimentación',
-  'Vestimenta',
-  'Hogar',
-  'Servicios',
-  'Tecnología',
-  'Salud',
-  'Educación',
-  'Entretenimiento',
-  'Belleza',
-  'Deportes',
-  'Otros',
-];
+import { useCategorias } from '@/hooks/useCategorias';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -28,6 +15,7 @@ interface Props {
 export default function EditarLocalPage({ params }: Props) {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const categorias = useCategorias();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');

@@ -106,3 +106,8 @@ model Favorito {
 
   @@unique([userId, localId])
 }
+
+model Categoria {
+  id     String @id @default(uuid())
+  nombre String @unique
+}

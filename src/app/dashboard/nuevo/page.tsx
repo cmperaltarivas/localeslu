@@ -5,20 +5,11 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
 import DropdownSelect from '@/components/DropdownSelect';
+import { useCategorias } from '@/hooks/useCategorias';
 
-const categorias = [
-  'Alimentación',
-  'Vestimenta',
-  'Hogar',
-  'Servicios',
-  'Tecnología',
-  'Salud',
-  'Educación',
-  'Entretenimiento',
-  'Belleza',
-  'Deportes',
-  'Otros',
-];
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
 interface Errores {
   nombre?: string;
@@ -30,6 +21,7 @@ interface Errores {
 export default function NuevoLocalPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const categorias = useCategorias();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);

@@ -6,12 +6,7 @@ import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
 import DropdownSelect from '@/components/DropdownSelect';
 import MapPicker from '@/components/MapPicker';
-
-const todasCategorias = [
-  'Alimentación', 'Vestimenta', 'Hogar', 'Servicios',
-  'Tecnología', 'Salud', 'Educación', 'Entretenimiento',
-  'Belleza', 'Deportes', 'Otros',
-];
+import { useCategorias } from '@/hooks/useCategorias';
 
 interface Props {
   isOpen: boolean;
@@ -23,6 +18,7 @@ interface Props {
 export default function EditarLocalModal({ isOpen, onClose, localId, onActualizar }: Props) {
   const router = useRouter();
   const { status } = useSession();
+  const categorias = useCategorias();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
@@ -296,7 +292,7 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
               Categorías *
             </label>
             <div className="flex flex-wrap gap-2">
-              {todasCategorias.map((cat) => (
+              {categorias.map((cat) => (
                 <button
                   key={cat}
                   type="button"
