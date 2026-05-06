@@ -319,13 +319,13 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
 )}
           </div>
 
-          <div className="flex gap-1 mt-2">
+          <div className="flex gap-1 mt-2 relative">
             <input
               type="text"
               value={nuevaCategoria}
               onChange={e => setNuevaCategoria(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && agregarCategoria()}
-              placeholder="Agregar categoría..."
+              placeholder="Buscar o crear categoría..."
               className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -336,6 +336,27 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
             >
               {agregandoCategoria ? <span className="spinner" /> : 'Agregar'}
             </button>
+            {nuevaCategoria.trim() && (() => {
+              const sugerencias = categorias.filter(c =>
+                c.toLowerCase().includes(nuevaCategoria.toLowerCase()) &&
+                !formData.categorias.includes(c)
+              );
+              if (sugerencias.length === 0) return null;
+              return (
+                <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden max-h-40 overflow-y-auto">
+                  {sugerencias.map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => { toggleCategoria(cat); setNuevaCategoria(''); }}
+                      className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
 
           <div className="border-t border-gray-200 pt-4">

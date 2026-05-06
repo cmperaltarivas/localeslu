@@ -235,7 +235,7 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
             <label className="block text-sm font-medium text-[var(--fg-muted)] mb-2">
               Categorías *
             </label>
-            <div className="flex flex-wrap gap-2">
+<div className="flex flex-wrap gap-2">
               {categorias.map((cat) => (
                 <button
                   key={cat}
@@ -250,6 +250,53 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
                   {formData.categorias.includes(cat) ? '✓ ' : ''}{cat}
                 </button>
               ))}
+            </div>
+            {errores.categorias && (
+              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {errores.categorias}
+              </p>
+            )}
+            <div className="relative mt-2">
+              <div className="flex gap-1">
+                <input
+                  type="text"
+                  value={nuevaCategoria}
+                  onChange={e => setNuevaCategoria(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && agregarCategoria()}
+                  placeholder="Buscar o crear categoría..."
+                  className="flex-1 px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30"
+                />
+                <button
+                  type="button"
+                  onClick={agregarCategoria}
+                  disabled={agregandoCategoria || !nuevaCategoria.trim()}
+                  className="px-3 py-1.5 bg-[var(--primary)] text-white rounded-lg text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+                >
+                  {agregandoCategoria ? <span className="spinner" /> : 'Agregar'}
+                </button>
+              </div>
+              {nuevaCategoria.trim() && (() => {
+                const sugerencias = categorias.filter(c => 
+                  c.toLowerCase().includes(nuevaCategoria.toLowerCase()) &&
+                  !formData.categorias.includes(c)
+                );
+                if (sugerencias.length === 0) return null;
+                return (
+                  <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-[var(--border)] rounded-lg shadow-lg overflow-hidden max-h-40 overflow-y-auto">
+                    {sugerencias.map(cat => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => { toggleCategoria(cat); setNuevaCategoria(''); }}
+                        className="w-full text-left px-3 py-1.5 text-xs text-[var(--fg)] hover:bg-[var(--bg)] transition-colors"
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
             {errores.categorias && (
               <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
