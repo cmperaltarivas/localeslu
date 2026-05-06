@@ -25,6 +25,38 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
   const [errores, setErrores] = useState<Record<string, string>>({});
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const [nuevaCategoria, setNuevaCategoria] = useState('');
+  const [agregandoCategoria, setAgregandoCategoria] = useState(false);
+
+  const agregarCategoria = async () => {
+    if (!nuevaCategoria.trim() || agregandoCategoria) return;
+    const nombre = nuevaCategoria.trim();
+    if (categorias.includes(nombre)) {
+      toggleCategoria(nombre);
+      setNuevaCategoria('');
+      return;
+    }
+    setAgregandoCategoria(true);
+    try {
+      const res = await fetch('/api/categorias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre }),
+      });
+      if (res.ok) {
+        toggleCategoria(nombre);
+        setNuevaCategoria('');
+        window.location.reload();
+      } else {
+        const data = await res.json();
+        if (data.error?.includes('Ya existe')) toggleCategoria(nombre);
+        mostrarToast(data.error || 'Error', 'error');
+      }
+    } catch {
+      mostrarToast('Error de conexión', 'error');
+    } finally { setAgregandoCategoria(false); }
+  };
+
   const scrollAlPrimerError = useCallback(() => {
     const container = scrollRef.current;
     if (!container) return;
@@ -284,32 +316,26 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
             />
             {errores.nombre && (
               <p className="text-red-500 text-sm mt-1">{errores.nombre}</p>
-            )}
+)}
           </div>
 
-          <div data-error={errores.categorias ? "true" : undefined}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Categorías *
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {categorias.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => toggleCategoria(cat)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    formData.categorias.includes(cat)
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {formData.categorias.includes(cat) ? '✓ ' : ''}{cat}
-                </button>
-              ))}
-            </div>
-            {errores.categorias && (
-              <p className="text-red-500 text-sm mt-1">{errores.categorias}</p>
-            )}
+          <div className="flex gap-1 mt-2">
+            <input
+              type="text"
+              value={nuevaCategoria}
+              onChange={e => setNuevaCategoria(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && agregarCategoria()}
+              placeholder="Agregar categoría..."
+              className="flex-1 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={agregarCategoria}
+              disabled={agregandoCategoria || !nuevaCategoria.trim()}
+              className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-medium hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            >
+              {agregandoCategoria ? <span className="spinner" /> : 'Agregar'}
+            </button>
           </div>
 
           <div className="border-t border-gray-200 pt-4">

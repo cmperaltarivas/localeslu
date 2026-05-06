@@ -36,6 +36,38 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
     imagenes: '',
   });
 
+  const [nuevaCategoria, setNuevaCategoria] = useState('');
+  const [agregandoCategoria, setAgregandoCategoria] = useState(false);
+
+  const agregarCategoria = async () => {
+    if (!nuevaCategoria.trim() || agregandoCategoria) return;
+    const nombre = nuevaCategoria.trim();
+    if (categorias.includes(nombre)) {
+      toggleCategoria(nombre);
+      setNuevaCategoria('');
+      return;
+    }
+    setAgregandoCategoria(true);
+    try {
+      const res = await fetch('/api/categorias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre }),
+      });
+      if (res.ok) {
+        toggleCategoria(nombre);
+        setNuevaCategoria('');
+        window.location.reload();
+      } else {
+        const data = await res.json();
+        if (data.error?.includes('Ya existe')) toggleCategoria(nombre);
+        mostrarToast(data.error || 'Error al agregar categoría', 'error');
+      }
+    } catch {
+      mostrarToast('Error de conexión', 'error');
+    } finally { setAgregandoCategoria(false); }
+  };
+
   const scrollAlPrimerError = useCallback(() => {
     const container = scrollRef.current;
     if (!container) return;
@@ -356,8 +388,26 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
                     className="w-full px-4 py-3 border border-[var(--border)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)] transition-all"
                     placeholder="-73.08211"
                   />
-                </div>
+</div>
+              <div className="flex gap-1 mt-2">
+                <input
+                  type="text"
+                  value={nuevaCategoria}
+                  onChange={e => setNuevaCategoria(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && agregarCategoria()}
+                  placeholder="Agregar categoría..."
+                  className="flex-1 px-3 py-1.5 bg-[var(--bg)] border border-[var(--border)] rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30"
+                />
+                <button
+                  type="button"
+                  onClick={agregarCategoria}
+                  disabled={agregandoCategoria || !nuevaCategoria.trim()}
+                  className="px-3 py-1.5 bg-[var(--primary)] text-white rounded-lg text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+                >
+                  {agregandoCategoria ? <span className="spinner" /> : 'Agregar'}
+                </button>
               </div>
+            </div>
             </div>
           </div>
 

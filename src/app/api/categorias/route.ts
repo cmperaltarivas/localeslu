@@ -26,6 +26,9 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+    if (!session?.user?.email && !session?.user?.id) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
     const { nombre } = await request.json();
     if (!nombre?.trim()) return NextResponse.json({ error: 'Falta el nombre' }, { status: 400 });
 
