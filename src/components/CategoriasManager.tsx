@@ -2,20 +2,15 @@
 
 import { useState } from 'react';
 import { mostrarToast } from '@/components/Toast';
-import { useCategorias } from '@/hooks/useCategorias';
+import { useCategorias, notifyCategoriasUpdated } from '@/hooks/useCategorias';
 
 export default function CategoriasManager() {
-  const [categorias, setCategoriasLocal] = useState<string[]>([]);
+  const categorias = useCategorias();
   const [nueva, setNueva] = useState('');
   const [agregando, setAgregando] = useState(false);
   const [catAEliminar, setCatAEliminar] = useState<string | null>(null);
 
-  const categoriasHook = useCategorias();
-
-  // Sync from hook
-  useState(() => { if (categoriasHook.length > 0) setCategoriasLocal(categoriasHook); });
-
-  const cats = categorias.length > 0 ? categorias : categoriasHook;
+  const cats = categorias;
 
   const agregar = async () => {
     if (!nueva.trim()) return;
@@ -28,8 +23,8 @@ export default function CategoriasManager() {
       });
       const data = await res.json();
       if (res.ok) {
-        setCategoriasLocal(prev => [...prev, nueva.trim()].sort());
         setNueva('');
+        notifyCategoriasUpdated();
         mostrarToast('Categoría agregada', 'success');
       } else {
         mostrarToast(data.error || 'Error', 'error');
@@ -44,7 +39,7 @@ export default function CategoriasManager() {
     try {
       const res = await fetch(`/api/categorias?nombre=${encodeURIComponent(catAEliminar)}`, { method: 'DELETE' });
       if (res.ok) {
-        setCategoriasLocal(prev => prev.filter(c => c !== catAEliminar));
+        notifyCategoriasUpdated();
         mostrarToast('Categoría eliminada', 'success');
       } else {
         const data = await res.json();
@@ -58,7 +53,7 @@ export default function CategoriasManager() {
   return (
     <div className="bg-[var(--card-bg)] rounded-xl border border-[var(--border-light)] shadow-sm p-6 mt-6">
       <h2 className="text-lg font-bold text-[var(--fg)] mb-1">Categorías</h2>
-      <p className="text-xs text-[var(--fg-muted)] mb-4">{cats.length} categorías · Agrega o elimina según necesites</p>
+      <p className="text-xs text-[var(--fg-muted)] mb-4">{categorias.length} categorías · Agrega o elimina según necesites</p>
 
       <div className="flex gap-2 mb-4">
         <input

@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
 import DropdownSelect from '@/components/DropdownSelect';
 import MapPicker from '@/components/MapPicker';
-import { useCategorias } from '@/hooks/useCategorias';
+import { useCategorias, notifyCategoriasUpdated } from '@/hooks/useCategorias';
 
 interface Props {
   isOpen: boolean;
@@ -60,6 +60,7 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
       });
       if (res.ok) {
         setCategoriasLocales(prev => [...prev, nombre].sort());
+        notifyCategoriasUpdated();
         toggleCategoria(nombre);
         setNuevaCategoria('');
       } else {
