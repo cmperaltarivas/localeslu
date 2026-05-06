@@ -18,8 +18,12 @@ interface Props {
 export default function EditarLocalModal({ isOpen, onClose, localId, onActualizar }: Props) {
   const router = useRouter();
   const { status } = useSession();
-  const categorias = useCategorias();
+  const categoriasHook = useCategorias();
+  const [categoriasLocales, setCategoriasLocales] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const categorias = categoriasLocales.length > 0 ? categoriasLocales : categoriasHook;
+  useEffect(() => { if (categoriasHook.length > 0 && categoriasLocales.length === 0) setCategoriasLocales(categoriasHook); }, [categoriasHook]);
   const [saving, setSaving] = useState(false);
   const [originalData, setOriginalData] = useState<any>(null);
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -44,9 +48,9 @@ export default function EditarLocalModal({ isOpen, onClose, localId, onActualiza
         body: JSON.stringify({ nombre }),
       });
       if (res.ok) {
+        setCategoriasLocales(prev => [...prev, nombre].sort());
         toggleCategoria(nombre);
         setNuevaCategoria('');
-        window.location.reload();
       } else {
         const data = await res.json();
         if (data.error?.includes('Ya existe')) toggleCategoria(nombre);

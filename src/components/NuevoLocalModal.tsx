@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { mostrarToast } from '@/components/Toast';
 import DropdownSelect from '@/components/DropdownSelect';
@@ -17,8 +17,12 @@ interface Props {
 export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props) {
   const router = useRouter();
   const { status } = useSession();
-  const categorias = useCategorias();
+  const categoriasHook = useCategorias();
+  const [categoriasLocales, setCategoriasLocales] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const categorias = categoriasLocales.length > 0 ? categoriasLocales : categoriasHook;
+  useEffect(() => { if (categoriasHook.length > 0 && categoriasLocales.length === 0) setCategoriasLocales(categoriasHook); }, [categoriasHook]);
   const [errores, setErrores] = useState<Record<string, string>>({});
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -55,9 +59,9 @@ export default function NuevoLocalModal({ isOpen, onClose, onActualizar }: Props
         body: JSON.stringify({ nombre }),
       });
       if (res.ok) {
+        setCategoriasLocales(prev => [...prev, nombre].sort());
         toggleCategoria(nombre);
         setNuevaCategoria('');
-        window.location.reload();
       } else {
         const data = await res.json();
         if (data.error?.includes('Ya existe')) toggleCategoria(nombre);
